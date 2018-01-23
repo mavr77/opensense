@@ -14,7 +14,9 @@ opensense:
 
 install:	opensense
 		install -o $(OWNER) -g $(GROUP) -m 755 opensense $(SBINDIR)
-#		install -o $(OWNER) -g $(GROUP) -m 755 -d /var/cache/openufp
+#		install -o $(OWNER) -g $(GROUP) -m 755 -d /var/cache/opensense
 
 clean:
 		rm -f opensense
+
+
