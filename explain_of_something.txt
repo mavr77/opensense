@@ -1,0 +1,42 @@
+
+
+
+
+-----------
+   4005
+-----------
+
+
+p[4005] -> fork() -> db_req -> answer(yes/no) -> exit()
+
+p[4005] -> db_req -> answer(yes/no) -> exit()
+
+           -------------time limit-----------
+
+p1[4005] -> fork() -> db_req -> answer(yes/no) -> exit()
+p2[4005] -> fork() -> db_req -> answer(yes/no) -> exit()
+
+
+p1[4005] p2 p3-> db_req -> answer(yes/no) -> exit() p2[4005] -> db_req -> answer(yes/no) -> exit()
+
+
+ram
+0x0
+...
+100	G 
+101	I
+102	T
+103	\0
+104 X
+105 X
+
+
+char *s  -> *s=GIT
+int *i   -> memmory addres for 32 bit integer
+int i=5    -> var i->(5)  &i=0x123456 *--get data from addr(&i)=5    ;;;; *i = XXX (on memmory address 5)
+
+char s[3] -> &s = 0x100
+
+s=0x100
+
+
