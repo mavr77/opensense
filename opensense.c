@@ -1,23 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include <unistd.h>
 
 
 int main(int argc, char **argv)
 {
 	int c;	// var for options
-	char config[10];
+	int daemon_flag = 0;
+	char *config;
 	/* getoptlong ---- for long key */
 	while ((c = getopt (argc, argv, "c:p:vd")) != -1)
 
 	    switch (c)
 	      {
-	      case 'a':
-	        aflag = 1;
-	        break;
-	      case 'b':
-	        bflag = 1;
+	      case 'd':
+	        daemon_flag = 1;
 	        break;
 	      case 'c':
-	        cvalue = optarg;
+	        config = optarg;
 	        break;
 	      case '?':
 	        if (optopt == 'c')
@@ -32,6 +33,8 @@ int main(int argc, char **argv)
 	      default:
 	        abort ();
 	      }
+	printf("%s\n", config);
+	printf("%d\n", daemon_flag);
 
 
 	return 0;
