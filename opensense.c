@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <signal.h>
 #include <syslog.h>
@@ -10,7 +11,8 @@
 
 int startmain(void) {
   for(;;){
-
+  	sleep(20);
+  	exit(1);
   }
 }
 
@@ -66,16 +68,17 @@ int main(int argc, char **argv)
 	printf("%d\n", daemon_flag);
   if(daemon_flag == 1) {
   	if((p = fork()) == 0) {
+  		printf("%s\n", "Started...");
   		chdir("/");
   		umask(0);
   		close(STDIN_FILENO);
-			close(STDOUT_FILENO);
-			close(STDERR_FILENO);
-			sid = setsid();
-			signal(SIGHUP, signal_handler); // write tests for signal handling;
+		close(STDOUT_FILENO);
+		close(STDERR_FILENO);
+		sid = setsid();
+		signal(SIGHUP, signal_handler); // write tests for signal handling;
   		startmain();
   	} else {
-  		printf("%s\n", "Daemon failed to launch");
+  		printf("%s %d\n", "Daemon failed to launch",p);
   		exit(1); // DZ kod
   	}
  	} else {
