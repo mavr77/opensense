@@ -8,11 +8,18 @@
 #include <fcntl.h>
 #include <string.h>
 
-int startmain(void) {
+int startmain(void)
+{
   for(;;){
-
+  	printf("%s\n", "str");
+  	// printsomething("Start main");
   }
 }
+
+// void printsomething(char []str)
+// {
+// 	printf("%s\n", str);
+// }
 
 void signal_handler(int sig)
 {
@@ -37,12 +44,13 @@ int main(int argc, char **argv)
 {
 	int c;	// var for options
 	int daemon_flag = 0;
+	int status;
 	char *config;
-	pid_t p, sid;
+	pid_t d_pid, sid;
 
 	/* getoptlong ---- for long key */
 	while ((c = getopt(argc, argv, "c:vd")) != -1)
-    switch (c)
+    switch(c)
       {
       case 'd':
         daemon_flag = 1;
@@ -63,9 +71,15 @@ int main(int argc, char **argv)
       default: // it will nevet get to default.
         abort();
       }
+
 	printf("%d\n", daemon_flag);
-  if(daemon_flag == 1) {
-  	if((p = fork()) == 0) {
+	// CHANGE IT TO 1 Once it start working
+  if(daemon_flag == 0) {
+  	d_pid = fork();
+  	printf("%d\n", d_pid);
+  	if(d_pid < 0) {
+  		exit(1);
+  	} else if(d_pid == 0) {
   		chdir("/");
   		umask(0);
   		close(STDIN_FILENO);
@@ -75,16 +89,17 @@ int main(int argc, char **argv)
 			signal(SIGHUP, signal_handler); // write tests for signal handling;
   		startmain();
   	} else {
-  		printf("%s\n", "Daemon failed to launch");
-  		exit(1); // DZ kod
+  		printf("%s\n", "Parent waiting");
+  		waitpid(d_pid, &status, 0);
+  		exit(0);
   	}
  	} else {
- 		startmain();
+ 		printf("startmain in main thread when it works");
+ 		// startmain(); // ::startmain();
  	}
 
 	printf("%s\n", config);
 	printf("%d\n", daemon_flag);
-
 
 	return 0;
 }
