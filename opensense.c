@@ -11,17 +11,21 @@
 
 int startmain(void)
 {
+	int opensense_fd;
+  int local_port = 0;
+	struct sockaddr_in opensense_addr;
+
+	opensense_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+	if(opensense_fd < 0) {
+		printf("%s\n", "Failed to open socket");
+	}
+
   for(;;){
-  	printf("%s\n", "str");
   	sleep(3);
   	exit(1);
   }
 }
-
-// void printsomething(char []str)
-// {
-// 	printf("%s\n", str);
-// }
 
 void signal_handler(int sig)
 {
@@ -74,6 +78,10 @@ int main(int argc, char **argv)
       }
 
  	if(daemon_flag == 1) {
+		// Because this main process should just launch the fork and quit
+		// if child will send something to parent and that something wont get processed
+		// then it will become zombie process, so we need to ignore fork signals.
+		signal(SIGCHLD, SIG_IGN);
   	if((d_pid = fork()) == 0) {
   		printf("%s\n", "Started...");
   		chdir("/");
