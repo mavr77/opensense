@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <signal.h>
 #include <syslog.h>
@@ -12,7 +13,8 @@ int startmain(void)
 {
   for(;;){
   	printf("%s\n", "str");
-  	// printsomething("Start main");
+  	sleep(3);
+  	exit(1);
   }
 }
 
@@ -44,7 +46,6 @@ int main(int argc, char **argv)
 {
 	int c;	// var for options
 	int daemon_flag = 0;
-	int status;
 	char *config;
 	pid_t d_pid, sid;
 
@@ -72,14 +73,9 @@ int main(int argc, char **argv)
         abort();
       }
 
-	printf("%d\n", daemon_flag);
-	// CHANGE IT TO 1 Once it start working
-  if(daemon_flag == 0) {
-  	d_pid = fork();
-  	printf("%d\n", d_pid);
-  	if(d_pid < 0) {
-  		exit(1);
-  	} else if(d_pid == 0) {
+ 	if(daemon_flag == 1) {
+  	if((d_pid = fork()) == 0) {
+  		printf("%s\n", "Started...");
   		chdir("/");
   		umask(0);
   		close(STDIN_FILENO);
@@ -88,14 +84,13 @@ int main(int argc, char **argv)
 			sid = setsid();
 			signal(SIGHUP, signal_handler); // write tests for signal handling;
   		startmain();
-  	} else {
-  		printf("%s\n", "Parent waiting");
-  		waitpid(d_pid, &status, 0);
-  		exit(0);
+  	}
+  	if(d_pid == -1) {
+  		printf("%s\n", "Daemon failed to launch");
+  		exit(1);
   	}
  	} else {
- 		printf("startmain in main thread when it works");
- 		// startmain(); // ::startmain();
+ 		startmain();
  	}
 
 	printf("%s\n", config);
