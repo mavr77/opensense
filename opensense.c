@@ -41,7 +41,6 @@ int main(int argc, char **argv)
 	int daemon_flag = 0;
 	char *config;
 	pid_t p, sid;
-	//123
 
 	/* getoptlong ---- for long key */
 	while ((c = getopt(argc, argv, "c:vd")) != -1)
@@ -77,7 +76,6 @@ int main(int argc, char **argv)
 		close(STDERR_FILENO);
 		sid = setsid();
 		signal(SIGHUP, signal_handler); // write tests for signal handling;
-		i=100;
   		startmain();
   	} else {
 
