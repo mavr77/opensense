@@ -16,10 +16,16 @@ int startmain(void)
 	struct sockaddr_in opensense_addr;
 
 	opensense_fd = socket(AF_INET, SOCK_STREAM, 0);
-
 	if(opensense_fd < 0) {
 		printf("%s\n", "Failed to open socket");
 	}
+
+	int optval = 1;
+  if (setsockopt(opensense_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0) {
+      close(opensense_fd);
+      printf("opensense v%s: setsockopt failed.\n", VERSION);
+      exit(1);
+  }
 
   for(;;){
   	sleep(3);
