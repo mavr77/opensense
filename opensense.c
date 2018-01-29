@@ -60,7 +60,15 @@ int main(int argc, char **argv)
 	pid_t d_pid, sid;
 
 	/* getoptlong ---- for long key */
-	while ((c = getopt(argc, argv, "c:vd")) != -1)
+	static struct option longopts[] = {
+    { "config",  required_argument, NULL,        'c' },
+    { "help",    no_argument,       NULL,        'h' },
+    { "verbose", no_argument,       NULL,        'v' },
+    { "daemon" , no_argument,       &daemon_flag, 1  },
+    { 0, 0, 0, 0 }
+	};
+
+	while ((c = getopt_long(argc, argv, "c:vd", longopts, NULL)) != -1)
     switch(c)
       {
       case 'd':
