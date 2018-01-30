@@ -8,6 +8,13 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <getopt.h>
+
+#define VERSION "0.1"
 
 int startmain(void)
 {
@@ -64,7 +71,7 @@ int main(int argc, char **argv)
     { "config",  required_argument, NULL,        'c' },
     { "help",    no_argument,       NULL,        'h' },
     { "verbose", no_argument,       NULL,        'v' },
-    { "daemon" , no_argument,       &daemon_flag, 1  },
+    { "daemon" , no_argument,       NULL,         1  },
     { 0, 0, 0, 0 }
 	};
 
