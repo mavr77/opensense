@@ -7,6 +7,7 @@
 #define N2H2_REQ_ACCEPT 2
 #define N2H2_REQ_DENY 258
 #define N2H2_REQ_SIZE 18
+#define URL_SIZE 65535
 
 struct n2h2_req {
     uint16_t code;

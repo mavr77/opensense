@@ -1,21 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <signal.h>
-#include <syslog.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <getopt.h>
-
-#define VERSION "0.1"
-#define REQ_SIZE 100
+#include "opensense.h"
 
 int startmain(void)
 {
@@ -66,11 +49,10 @@ int startmain(void)
     }
 
     if ((connection_pid = fork()) == 0) {
-      // if(os == "windows"){
-        // closesocket(opensense_fd)
-      // } else {
-        close(opensense_fd); // ???? try what happens if not closing
-      // }
+
+      struct n2h2_req *n2h2_request = NULL;
+
+      close(opensense_fd);
 
       char msg[REQ_SIZE];
       int msgsize = 0;
@@ -78,10 +60,8 @@ int startmain(void)
       for(;;){
         bzero(&msg, sizeof(msg));
         msgsize = recvfrom(cli_fd, msg, REQ_SIZE, 0, (struct sockaddr *)&cli_addr, &cli_size);
-
         if(msgsize == 0){
           printf("opensense msg: %s\n", "connection has been closed");
-          // ??? exit or do something else? or kill that fork?
           close(cli_fd);
           exit(1);
         } else if(msgsize < 0) {
@@ -90,13 +70,13 @@ int startmain(void)
           exit(1);
         }
         printf("opensense msg: %s\n", msg);
+        n2h2_request = (struct n2h2_req *)msg;
+        n2h2_alive(cli_fd, n2h2_request);
       }
     }
     close(cli_fd);
     printf("%s\n", "main thread close cli_fd");
-    
   }
-
 
 }
 
