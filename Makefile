@@ -9,6 +9,9 @@ SBINDIR=/usr/sbin
 
 all:	opensense
 
+run:	clean opensense
+		./opensense
+
 opensense:
 		$(CC) $(CFLAGS) opensense.c -o $@ $(LIBS)
 

@@ -71,10 +71,16 @@ int startmain(void)
       for(;;){
         bzero(&msg, sizeof(msg));
         msgsize = recvfrom(cli_fd, msg, REQ_SIZE, 0, (struct sockaddr *)&cli_addr, &cli_size);
+        if (msgsize < 1) {
+                        close(cli_fd);
+                        exit(1);
+                    }
         printf("opensense msg: %s\n", msg);
       }
     }
-    exit(1);
+    close(cli_fd);
+    printf("%s\n", "main thread close cli_fd");
+    
   }
 
 
