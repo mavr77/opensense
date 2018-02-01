@@ -60,17 +60,31 @@ int startmain(void)
 
   for(;;){
     cli_size = sizeof(cli_addr);
-    cli_fd = accept(opensense_fd, (struct sockaddr *)&cli_addr, &cli_size);
+    if((cli_fd = accept(opensense_fd, (struct sockaddr *)&cli_addr, &cli_size)) < 0){
+      printf("opensense v%s: failed to accept connection.\n", VERSION);
+      exit(1);
+    }
 
     if ((connection_pid = fork()) == 0) {
-      close(opensense_fd);
+      // if(os == "windows"){
+        // closesocket(opensense_fd)
+      // } else {
+        close(opensense_fd); // ???? try what happens if not closing
+      // }
 
       char msg[REQ_SIZE];
       int msgsize = 0;
 
       for(;;){
         bzero(&msg, sizeof(msg));
-        msgsize = recvfrom(cli_fd, msg, REQ_SIZE, 0, (struct sockaddr *)&cli_addr, &cli_size);
+        // msgsize = recvfrom(cli_fd, msg, REQ_SIZE, 0, (struct sockaddr *)&cli_addr, &cli_size);
+        msgsize = recv(cli_fd, msg, REQ_SIZE, 0, (struct sockaddr *)&cli_addr, &cli_size);
+        if(msgsize == 0){
+          printf("opensense msg: %s\n", "connection has been closed");
+          // ??? exit or do something else? or kill that fork?
+        } else if(msgsize < 0) {
+          printf("opensense msg: %s\n", "receiving data has failed");
+        }
         printf("opensense msg: %s\n", msg);
       }
     }
