@@ -70,7 +70,7 @@ int startmain(void)
           exit(1);
         }
         printf("opensense msg: %s\n", msg);
-        // n2h2_request = (struct n2h2_req *)msg;
+        n2h2_request = (struct n2h2_req *)msg;
         // n2h2_alive(cli_fd, n2h2_request);
         n2h2_deny(cli_fd, n2h2_request, "http://google.com");
       }
