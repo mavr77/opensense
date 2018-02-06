@@ -51,6 +51,7 @@ int startmain(void)
     if ((connection_pid = fork()) == 0) {
 
       struct n2h2_req *n2h2_request = NULL;
+      struct uf_request request;
 
       close(opensense_fd);
 
@@ -71,8 +72,21 @@ int startmain(void)
         }
         printf("opensense msg: %s\n", msg);
         n2h2_request = (struct n2h2_req *)msg;
-        // n2h2_alive(cli_fd, n2h2_request);
-        n2h2_deny(cli_fd, n2h2_request, "http://google.com");
+        request = n2h2_validate(n2h2_request, msgsize);
+        if(request.type == UNKNOWN)
+        {
+          close(cli_fd);
+          printf("Request UNKNOWN");
+          exit(1);
+        }
+
+        if(request.type == N2H2_ALIVE)
+        {
+          printf("receive alive packet, replying on it");
+          n2h2_alive(cli_fd, n2h2_request);
+        }
+
+        // n2h2_deny(cli_fd, n2h2_request, "http://google.com");
       }
     }
     close(cli_fd);

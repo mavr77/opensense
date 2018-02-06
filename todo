@@ -1,1 +1,8 @@
 Finish getopt_long !
+###
+returns -1 and sets errno on error
+###
+use getaddrinfo(); instead of manual struct addr_in
+###
+strncpy
+###

@@ -24,6 +24,37 @@ void n2h2_accept(int fd, struct n2h2_req *n2h2_request)
 
 }
 
+struct uf_request n2h2_validate(struct n2h2_req *n2h2_request, int msgsize)
+{
+
+  struct uf_request request = {
+    0, {0}, {0}, "", ""
+  };
+
+  struct in_addr srcip, dstip;
+
+  request.type = UNKNOWN;
+
+  if(msgsize == N2H2_ALIVE_SIZE && htons(n2h2_request->code) == N2H2_ALIVE)
+  {
+    request.type = N2H2_ALIVE;
+    return request;
+  }
+
+  if(msgsize > N2H2_REQ_SIZE && htons(n2h2_request->code) == N2H2_REQ && htons(n2h2_request->urlsize) < URL_SIZE)
+  {
+    request.type = N2H2_REQ;
+    srcip.s_addr = n2h2_request->srcip;
+    dstip.s_addr = n2h2_request->dstip;
+    snprintf(request.srcip, sizeof(request.srcip), "%s", inet_ntoa(srcip)); // inet_ntoa ipv4 representation
+    snprintf(request.dstip, sizeof(request.dstip), "%s", inet_ntoa(dstip));
+    for(int i = 0; i < ntohs(n2h2_request->urlsize); i++)
+      request.url[i] = n2h2_request->url[i];
+    return request;
+  }
+  return request;
+}
+
 void n2h2_deny(int fd, struct n2h2_req *n2h2_request, char *redirect_url)
 {
   int urlsize = 0;
@@ -37,7 +68,7 @@ void n2h2_deny(int fd, struct n2h2_req *n2h2_request, char *redirect_url)
     if(urlsize < URL_SIZE){
       n2h2_resp_deny.urlsize = htons(urlsize);
       for(i=0;i<urlsize;i++){
-        n2h2_resp_deny.url[i] = redirect_url[i];
+        n2h2_resp_deny.url[i] = redirect_url[i]; // strncpy
       }
     } // no nwed to check for urlsize > URL_SIZE cause it needs to send response anyways and it will fill it in with zeros which is expected reply
   }
