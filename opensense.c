@@ -1,5 +1,10 @@
 #include "opensense.h"
 
+int check_access()
+{
+  return 1;
+}
+
 int startmain(void)
 {
   int opensense_fd;
@@ -85,8 +90,18 @@ int startmain(void)
           printf("receive alive packet, replying on it");
           n2h2_alive(cli_fd, n2h2_request);
         }
+        if(request.type == N2H2_REQ)
+        {
+          if(check_access)
+          {
+            n2h2_accept(cli_fd, n2h2_request);
+            printf("receive req packet, accepted it");
+          } else {
+            n2h2_deny(cli_fd, n2h2_request, "http://google.com");
+            printf("receive req packet, denied it");
+          }
+        }
 
-        // n2h2_deny(cli_fd, n2h2_request, "http://google.com");
       }
     }
     close(cli_fd);

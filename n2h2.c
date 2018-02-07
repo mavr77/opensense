@@ -9,19 +9,17 @@ void n2h2_alive(int fd, struct n2h2_req *n2h2_request)
   n2h2_resp_alive.urlsize = htons(0);
 
   printf("%d\n", (int)send(fd, &n2h2_resp_alive, N2H2_HDR, 0));
-
-  // n2h2_resp_alive.code = htons(N2H2_ALIVE_RESP);
-  // n2h2_resp_alive.serial =
-  // n2h2_resp_alive.srcip =
-  // n2h2_resp_alive.dstip =
-  // n2h2_resp_alive.urlsize =
-  // n2h2_resp_alive.usrsize =
-
 }
 
 void n2h2_accept(int fd, struct n2h2_req *n2h2_request)
 {
+  struct n2h2_resp n2h2_resp_accept;
+  n2h2_resp_accept.code = htons(N2H2_REQ_ACCEPT);
+  n2h2_resp_accept.serial = n2h2_request->serial;
+  n2h2_resp_accept.unknown = htons(0);
+  n2h2_resp_accept.urlsize = htons(0);
 
+  printf("%d\n", (int)send(fd, &n2h2_resp_accept, N2H2_HDR, 0));
 }
 
 struct uf_request n2h2_validate(struct n2h2_req *n2h2_request, int msgsize)
