@@ -93,7 +93,8 @@ int startmain(void)
         }
         if(request.type == N2H2_REQ)
         {
-          if(check_access)
+          // if(check_access)
+          if(blacklist_logic("blacklist.txt", request.url))
           {
             n2h2_accept(cli_fd, n2h2_request);
             printf("receive req packet from: %s, accepted it", request.url);
