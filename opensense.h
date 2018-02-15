@@ -14,6 +14,7 @@
 #include <netinet/in.h>
 #include <getopt.h>
 
+#include "blacklist.h"
 #include "n2h2.h"
 
 #define VERSION "0.1"

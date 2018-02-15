@@ -60,7 +60,7 @@ int startmain(void)
 
       close(opensense_fd);
 
-      char msg[REQ_SIZE];
+      char msg[REQ_SIZE]; // this where we will recieve the whole packet
       int msgsize = 0;
 
       for(;;){
@@ -75,6 +75,7 @@ int startmain(void)
           close(cli_fd);
           exit(1);
         }
+
         printf("opensense msg: %s\n", msg);
         n2h2_request = (struct n2h2_req *)msg;
         request = n2h2_validate(n2h2_request, msgsize);
@@ -92,10 +93,11 @@ int startmain(void)
         }
         if(request.type == N2H2_REQ)
         {
-          if(check_access)
+          // if(check_access)
+          if(blacklist_logic("blacklist.txt", request.url))
           {
             n2h2_accept(cli_fd, n2h2_request);
-            printf("receive req packet, accepted it");
+            printf("receive req packet from: %s, accepted it", request.url);
           } else {
             n2h2_deny(cli_fd, n2h2_request, "http://google.com");
             printf("receive req packet, denied it");

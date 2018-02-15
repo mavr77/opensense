@@ -13,7 +13,7 @@ run:	clean opensense
 		./opensense
 
 opensense:
-		$(CC) $(CFLAGS) opensense.c n2h2.c -o $@ $(LIBS)
+		$(CC) $(CFLAGS) opensense.c n2h2.c blacklist.c -o $@ $(LIBS)
 
 install:	opensense
 		install -o $(OWNER) -g $(GROUP) -m 755 opensense $(SBINDIR)
