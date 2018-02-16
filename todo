@@ -6,3 +6,6 @@ use getaddrinfo(); instead of manual struct addr_in
 ###
 strncpy
 ###
+add modular blacklist stuff for multiple databases.
+###
+add options so we point which black listss to work with through commandline params.

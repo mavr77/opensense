@@ -1,4 +1,2 @@
-#include <sqlite3.h>
 
-#include "opensense.h"
-
+extern int db_blacklist_logic(char *blacklist, char url[URL_SIZE]);

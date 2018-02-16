@@ -2,7 +2,8 @@
 
 int check_access(struct uf_request req)
 {
-  return blacklist_logic("blacklist.txt", req.url)
+  // return blacklist_logic("blacklist.txt", req.url);
+  return db_blacklist_logic("blacklist_url.dblite", req.url);
 }
 
 int startmain(void)

@@ -7,23 +7,38 @@ int db_blacklist_logic(char *blacklist, char url[URL_SIZE])
 {
   char blacklist_url[URL_SIZE];
   sqlite3 *db = 0; // хэндл объекта соединение к БД
-  char *err = 0;
+  sqlite3_stmt *res;
 
-  char *SQL;
+  char *SQL = "select * from blacklist where instr( ? ,url);";
 
-  if(sqlite3_open("blacklist_url.dblite", &db)){
-    fprintf(stderr, "Error opening db: %s\n", sqlite3_errmsg(db));
-    return 0;
+  // rc - resource connection
+  int rc = sqlite3_open(blacklist, &db);
   // executing SQL
-  } else if(sqlite3_exec(db, SQL, 0, 0, &err))
-  {
-    fprintf(stderr, "Error SQL: %s\n", err);
-    sqlite3_free(err);
+  if (rc != SQLITE_OK) {
+    fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+    sqlite3_close(db);
     return 0;
   }
-  if(){
 
+  // -1 check the size of sql string on your own, we could do SQL_SIZE if db could calculate
+  rc = sqlite3_prepare_v2(db, SQL, -1, &res, 0);
+
+  if (rc == SQLITE_OK) {
+    sqlite3_bind_text(res, 1, url, -1, SQLITE_STATIC);
+  } else {
+    fprintf(stderr, "Failed to execute statement: %s\n", sqlite3_errmsg(db));
+    return 0;
   }
+
+  // step is the same es exec, just executing by steps, by row not all rows at once. same as reading from file.
+  while (sqlite3_step(res) == SQLITE_ROW)
+  {
+    return 1;
+  }
+
+  // close all structure and stuff in memory and db. Some dbs has is build in close some dont, read docs.
+  sqlite3_finalize(res);
+
   // closing db connection
   sqlite3_close(db);
 

@@ -13,6 +13,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <getopt.h>
+#include <sqlite3.h>
 
 #include "blacklist.h"
 #include "n2h2.h"
