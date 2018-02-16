@@ -4,7 +4,7 @@ OWNER=root
 GROUP=root
 CC=gcc
 CFLAGS=-O2 -Wall
-#LIBS=-ldb
+LIBS=-lsqlite3
 SBINDIR=/usr/sbin
 
 all:	opensense
@@ -13,7 +13,7 @@ run:	clean opensense
 		./opensense
 
 opensense:
-		$(CC) $(CFLAGS) opensense.c n2h2.c blacklist.c -o $@ $(LIBS)
+		$(CC) $(CFLAGS) opensense.c n2h2.c blacklist.c db.c -o $@ $(LIBS)
 
 install:	opensense
 		install -o $(OWNER) -g $(GROUP) -m 755 opensense $(SBINDIR)

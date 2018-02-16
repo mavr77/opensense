@@ -23,7 +23,6 @@ int blacklist_logic(char *blacklist, char url[URL_SIZE])
     // sscanf function casting line which may have non printable characters to string for further comparison
     if(sscanf(line, "%s", blacklist_url) != 1)
       continue;
-
     if(strstr(url, blacklist_url) != NULL){
       fclose(file_desc);
       return 1;
