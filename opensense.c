@@ -1,8 +1,8 @@
 #include "opensense.h"
 
-int check_access()
+int check_access(struct uf_request req)
 {
-  return 1;
+  return blacklist_logic("blacklist.txt", req.url)
 }
 
 int startmain(void)
@@ -93,14 +93,13 @@ int startmain(void)
         }
         if(request.type == N2H2_REQ)
         {
-          // if(check_access)
-          if(blacklist_logic("blacklist.txt", request.url))
+          if(check_access(request))
           {
-            n2h2_accept(cli_fd, n2h2_request);
-            printf("receive req packet from: %s, accepted it", request.url);
-          } else {
             n2h2_deny(cli_fd, n2h2_request, "http://google.com");
             printf("receive req packet, denied it");
+          } else {
+            n2h2_accept(cli_fd, n2h2_request);
+            printf("receive req packet from: %s, accepted it", request.url);
           }
         }
 
