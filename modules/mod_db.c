@@ -3,9 +3,9 @@
 /*
   returns 0 if url not fount. or returns 1 if url in db in blacklist
 */
-int db_blacklist_logic(char *blacklist, char url[URL_SIZE])
+int blacklist_logic(char *blacklist, char url[URL_SIZE])
 {
-  char blacklist_url[URL_SIZE];
+  //char blacklist_url[URL_SIZE];
   sqlite3 *db = 0; // хэндл объекта соединение к БД
   sqlite3_stmt *res;
 

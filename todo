@@ -9,3 +9,7 @@ strncpy
 add modular blacklist stuff for multiple databases.
 ###
 add options so we point which black listss to work with through commandline params.
+###
+Makefile for modules blacklist
+###
+set things through config

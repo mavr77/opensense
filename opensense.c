@@ -1,9 +1,34 @@
 #include "opensense.h"
 
+char *blacklist_filename;
+char *blacklist_lib_filename;
+
 int check_access(struct uf_request req)
 {
-  // return blacklist_logic("blacklist.txt", req.url);
-  return db_blacklist_logic("blacklist_url.dblite", req.url);
+  void *lib_handle;
+  int (*blacklist)(char *, char[URL_SIZE]);
+  char *error;
+  int return_code = 0;
+
+  // loadind needed lib source file/code
+  lib_handle = dlopen(blacklist_lib_filename, RTLD_LAZY);
+  if (!lib_handle)
+  {
+    fprintf(stderr, "%s\n", dlerror());
+    exit(1);
+  }
+
+  // symlinking function from the needed lib that we loaded in dlopen function above.
+  blacklist = dlsym(lib_handle, "blacklist_logic");
+  if ((error = dlerror()) != NULL)
+  {
+    fprintf(stderr, "%s\n", error);
+    exit(1);
+  }
+
+  return_code = blacklist(blacklist_filename, req.url);
+  dlclose(lib_handle);
+  return return_code;
 }
 
 int startmain(void)
@@ -12,6 +37,7 @@ int startmain(void)
   int local_port = 0;
   struct sockaddr_in opensense_addr;
   pid_t connection_pid;
+  blacklist_filename = "blacklist_url.dblite";
 
   opensense_fd = socket(AF_INET, SOCK_STREAM, 0);
   if(opensense_fd < 0) {
