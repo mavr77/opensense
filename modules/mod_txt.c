@@ -1,4 +1,4 @@
-#include "opensense.h"
+#include "../opensense.h"
 
 /*
   returns 0 if url not fount. or returns 1 if url in in blacklist

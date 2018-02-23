@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+# lib that can stub requests and test n2h2 protocol
+
 import sys
 import getopt
 import socket
@@ -63,7 +66,7 @@ def send_url(s, protocol, url):
         s.sendall(url_req)
         data = s.recv(1024)
         print 'Received', repr(data)
-        
+
 
 def main():
     try:

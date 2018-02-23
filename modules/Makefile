@@ -1,28 +1,21 @@
-# make the opensense server
+# make the opensense blacklist logic modules
 #
 
-#gcc -Wall -fPIC -c *.c
-#gcc -shared -Wl -o libctest.so.1.0 -lsqlite3 *.o
-
-#gcc -shared -o libhello.so -fPIC hello.c
-
+# WHY ROOT
 OWNER=root
 GROUP=root
 CC=gcc
-# rdymanic for dynamic lib linker, dont worry if something missing at compile time
 CFLAGS=-Wall -shared -fPIC
 # user the dynamic lib
 LIBS=-lsqlite3
 SBINDIR=/usr/sbin
 
-
+all: mod_db.so mod_txt.so
 
 mod_db.so:
 		$(CC) $(CFLAGS) mod_db.c -o $@ $(LIBS)
-
-#install:	opensense
-#		install -o $(OWNER) -g $(GROUP) -m 755 opensense $(SBINDIR)
-#		install -o $(OWNER) -g $(GROUP) -m 755 -d /var/cache/opensense
+mod_txt.so:
+		$(CC) $(CFLAGS) mod_txt.c -o $@ # <- whats this
 
 clean:
 		rm -f *.o *.so

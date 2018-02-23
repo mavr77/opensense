@@ -16,9 +16,9 @@
 #include <sqlite3.h>
 #include <dlfcn.h>
 
-#include "blacklist.h"
 #include "n2h2.h"
-#include "db.h"
+#include "modules/mod_db.h"
+#include "modules/mod_txt.h"
 
 #define VERSION "0.1"
 #define URL_SIZE 65535
