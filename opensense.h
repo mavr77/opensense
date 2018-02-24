@@ -15,6 +15,7 @@
 #include <getopt.h>
 #include <sqlite3.h>
 #include <dlfcn.h>
+#include <libconfig.h>
 
 #include "n2h2.h"
 #include "modules/mod_db.h"

@@ -2,6 +2,7 @@
 
 char *blacklist_filename;
 char *blacklist_lib_filename;
+int local_port = 0;
 
 int check_access(struct uf_request req)
 {
@@ -34,7 +35,6 @@ int check_access(struct uf_request req)
 int startmain(void)
 {
   int opensense_fd;
-  int local_port = 0;
   struct sockaddr_in opensense_addr;
   pid_t connection_pid;
   blacklist_filename = "blacklist_url.dblite";
@@ -164,6 +164,11 @@ int main(int argc, char **argv)
   char *config;
   pid_t d_pid, sid;
 
+  config_t cfg;
+  config_setting_t *setting;
+  char *cfg_param;
+  char *engine;
+
   /* getoptlong ---- for long key */
   static struct option longopts[] = {
     { "config",  required_argument, NULL,        'c' },
@@ -181,6 +186,36 @@ int main(int argc, char **argv)
         break;
       case 'c':
         config = optarg;
+        config_init(&cfg);
+        if(! config_read_file(&cfg, config))
+        {
+          fprintf(stderr, "%s:%d - %s\n", config_error_file(&cfg),
+                  config_error_line(&cfg), config_error_text(&cfg));
+          config_destroy(&cfg);
+          return(EXIT_FAILURE);
+        }
+        /* Get the store name. */
+        if(config_lookup_string(&cfg, "port", &cfg_param)) {
+          printf("Local port: %s\n\n", cfg_param);
+          local_port = atoi(cfg_param);
+          printf("Local port: %d\n", local_port);
+        } else {
+          fprintf(stderr, "No 'name' setting in configuration file.\n");
+          return(EXIT_FAILURE);
+        }
+
+        if(config_lookup_string(&cfg, "engine", &cfg_param)) {
+          printf("Engine: %s\n\n", cfg_param);
+          engine = cfg_param;
+          if(config_lookup_string(&cfg, engine, &cfg_param)) {
+            printf("Engine mod: %s\n", cfg_param);
+          }
+        } else {
+          fprintf(stderr, "No 'name' setting in configuration file.\n");
+          return(EXIT_FAILURE);
+        }
+
+
         break;
       case '?':
         if (optopt == 'c')
@@ -191,7 +226,7 @@ int main(int argc, char **argv)
           fprintf (stderr,
                    "Unknown option character `\\x%x'.\n",
                    optopt);
-        return 1;
+        return EXIT_FAILURE;
       default: // it will nevet get to default.
         abort();
       }
