@@ -2,7 +2,7 @@
 
 char *blacklist_filename;
 char *blacklist_lib_filename;
-int local_port = 0;
+int local_port = 4005;
 
 int check_access(struct uf_request req)
 {
@@ -37,7 +37,6 @@ int startmain(void)
   int opensense_fd;
   struct sockaddr_in opensense_addr;
   pid_t connection_pid;
-  blacklist_filename = "blacklist_url.dblite";
 
   opensense_fd = socket(AF_INET, SOCK_STREAM, 0);
   if(opensense_fd < 0) {
@@ -53,7 +52,6 @@ int startmain(void)
 
   bzero(&opensense_addr, sizeof(opensense_addr));
 
-  local_port = 4005;
   opensense_addr.sin_family = AF_INET;
   opensense_addr.sin_addr.s_addr = htonl(INADDR_ANY);
   opensense_addr.sin_port = htons(local_port);
@@ -195,23 +193,30 @@ int main(int argc, char **argv)
           return(EXIT_FAILURE);
         }
         /* Get the store name. */
-        if(config_lookup_string(&cfg, "port", &cfg_param)) {
-          printf("Local port: %s\n\n", cfg_param);
-          local_port = atoi(cfg_param);
+        if(config_lookup_int(&cfg, "port", &local_port)) {
           printf("Local port: %d\n", local_port);
         } else {
-          fprintf(stderr, "No 'name' setting in configuration file.\n");
+          fprintf(stderr, "No 'port' setting in configuration file.\n");
           return(EXIT_FAILURE);
         }
 
         if(config_lookup_string(&cfg, "engine", &cfg_param)) {
           printf("Engine: %s\n\n", cfg_param);
           engine = cfg_param;
-          if(config_lookup_string(&cfg, engine, &cfg_param)) {
-            printf("Engine mod: %s\n", cfg_param);
+          setting = config_lookup(&cfg, engine);
+          if(setting != NULL) {
+            if(!config_setting_lookup_string(setting, "module", &blacklist_lib_filename)) {
+              fprintf(stderr, "No 'module file' setting in configuration file.\n");
+              return(EXIT_FAILURE);
+            }
+            if(!config_setting_lookup_string(setting, "blacklist", &blacklist_filename)) {
+              fprintf(stderr, "No 'blacklist filename' setting in configuration file.\n");
+              return(EXIT_FAILURE);
+            }
+            printf("lib & file: %s\n%s\n", blacklist_lib_filename, blacklist_filename);
           }
         } else {
-          fprintf(stderr, "No 'name' setting in configuration file.\n");
+          fprintf(stderr, "No 'engine' setting in configuration file.\n");
           return(EXIT_FAILURE);
         }
 

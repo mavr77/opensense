@@ -12,4 +12,4 @@ add options so we point which black listss to work with through commandline para
 ###
 Makefile for modules blacklist
 ###
-set things through config
+set things through config - done
